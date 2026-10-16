@@ -75,6 +75,7 @@ function Initialize-Hp {
     }
     foreach ($d in @($DataDir, $script:Hp.JournalDir)) {
         if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
+        if (-not [System.IO.Directory]::Exists($d)) { [void][System.IO.Directory]::CreateDirectory($d) }
     }
     if (-not $NoAcl) { Protect-DataDir }            # the tests pass -NoAcl so they never change permissions
     Import-HpSettings
@@ -110,6 +111,8 @@ function Set-HpSetting {
     param([string]$Name, $Value)
     $script:Hp.Settings[$Name] = $Value
     $file = Join-Path $script:Hp.DataDir 'settings.json'
+    $dir = Split-Path -Parent $file
+    if (-not [System.IO.Directory]::Exists($dir)) { [void][System.IO.Directory]::CreateDirectory($dir) }
     [System.IO.File]::WriteAllText($file, (ConvertTo-Json -InputObject $script:Hp.Settings -Depth 4))
 }
 
@@ -196,6 +199,7 @@ function Get-JournalRecords {
 
 function Save-JournalRecord {
     param($Record)
+    if (-not [System.IO.Directory]::Exists($script:Hp.JournalDir)) { [void][System.IO.Directory]::CreateDirectory($script:Hp.JournalDir) }
     $path = Join-Path $script:Hp.JournalDir ('{0:D4}.json' -f [int]$Record.Id)
     [System.IO.File]::WriteAllText($path, (ConvertTo-Json -InputObject $Record -Depth 8))
 }
