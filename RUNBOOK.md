@@ -3,11 +3,11 @@ tags: [hpcc4, windows, runbook]
 updated: 2026-10-15
 ---
 
-# HPCC4 RUNBOOK - assembly-t (Windows Server 2022)
+# HPCC4 RUNBOOK - assembly-20 (Windows Server 2022)
 
 Print this. On competition day there is **no AI at all** (packet rule 6, and your own rule). This file, `0-Gameplan.md` and the scripts are all you have - read them tonight.
 
-- Team number: **t = ____**   assembly = `172.16.t.30`, blackbox = `172.16.t.5`. Replace `t` in every command (write it on the paper copy with a pen).
+- Team number: **t = 20**   assembly = `172.16.20.30`, blackbox = `172.16.20.5`. Configured for **Team 20**.
 - Bundle hash (first 16 characters of the SHA-256 of `hp.zip`, written after the Friday freeze): `1BAA66E0252E212A`
 - Page 1 (section 0) is the card. The rest is reference, in phase order. "By hand" blocks are only for when the tool will not run.
 
@@ -104,13 +104,13 @@ This file, the phase pages of `0-Gameplan.md`, the NEIGH steps (section 4, jmone
 
 ## 2. Start of the day (first 5 minutes)
 
-1. Laptop (NetBird on): `mstsc /v:172.16.t.30`. Log in as `plinktern` with the packet password (packet pp. 12-13).
+1. Laptop (NetBird on): `mstsc /v:172.16.20.30` (or run `Connect-Competition.bat`). Log in as `plinktern` with the packet password (packet pp. 12-13).
 2. NEIGH, Boxes, assembly, Console: check it opens (each link works once; a black screen means use RDP or press Restart). Close it.
 3. NEIGH, Scoring: screenshot what is green. That is the baseline.
 4. Get the bundle onto the box, any one of:
    - In the mstsc window: copy `hp.zip` on the laptop (Ctrl+C), click the RDP desktop, paste (Ctrl+V).
    - Before connecting: mstsc, Show Options, Local Resources, More, tick drive C. In the session copy `\\tsclient\C\Users\Blaze\Desktop\hp.zip` to the Desktop.
-   - Plan B (blackbox hands it over): laptop: `ssh plinktern@172.16.t.5 mkdir -p depot`, then `scp "$env:USERPROFILE\Desktop\hp.zip" plinktern@172.16.t.5:depot/`, then `ssh plinktern@172.16.t.5` and there `cd depot` and `python3 -m http.server 8000 --bind 172.16.t.5`. On the box: `Invoke-WebRequest http://172.16.t.5:8000/hp.zip -OutFile "$env:USERPROFILE\Desktop\hp.zip" -UseBasicParsing`. Stop the server with Ctrl+C when it is done.
+   - Plan B (blackbox hands it over): laptop: `ssh plinktern@172.16.20.5 mkdir -p depot`, then `scp "$env:USERPROFILE\Desktop\hp.zip" plinktern@172.16.20.5:depot/`, then `ssh plinktern@172.16.20.5` and there `cd depot` and `python3 -m http.server 8000 --bind 172.16.20.5`. On the box: `Invoke-WebRequest http://172.16.20.5:8000/hp.zip -OutFile "$env:USERPROFILE\Desktop\hp.zip" -UseBasicParsing`. Stop the server with Ctrl+C when it is done.
 5. On the box, elevated PowerShell:
 
 ```powershell
@@ -176,7 +176,7 @@ Run the tool as plinktern for the first step only. The order matters: the old ad
 **4.1 New admin.** Row "No new admin account yet", Fix. It asks for the name and the passphrase twice (hidden prompts; paste them from Bitwarden). Read the preview, Yes. The preview warns if the passphrase is short or not plain keyboard characters.
 
 **4.2 Confirm it (do not skip).**
-1. Laptop: a SECOND mstsc window: `mstsc /v:172.16.t.30`, log in as the new admin. If it fails, fix it from the first window and do not go on.
+1. Laptop: a SECOND mstsc window: `mstsc /v:172.16.20.30`, log in as the new admin. If it fails, fix it from the first window and do not go on.
 2. In the new session open an elevated PowerShell (Run as administrator), `cd C:\hp`, start the tool there. It remembers the name (settings file). Row `New admin 'name' not confirmed yet`, Fix, Yes. That is "Confirm".
 3. Sign out of the plinktern session so only ONE session of yours is left:
 
@@ -190,7 +190,7 @@ Use the ID next to `plinktern` instead of `2`. From now on work in the new admin
 **4.3 jmoney - rotate ONCE.** Have NEIGH open first (scoreboard.plinko.horse, Users). Jenkins has its own `jmoney` login, separate from Windows, so there are two things to change and, in NEIGH, every assembly entry for jmoney (RDP and Jenkins).
 1. Row "jmoney still has the packet password", Fix. Paste the Bitwarden password twice. Read the preview, type `jmoney`, Yes.
 2. IMMEDIATELY: NEIGH, Users, every assembly entry for jmoney, paste the same password, **Save**.
-3. Jenkins (`http://172.16.t.30:8080`, log in with the Jenkins `plinktern` login): People, jmoney, Configure, Password = the same new password, Save.
+3. Jenkins (`http://172.16.20.30:8080`, log in with the Jenkins `plinktern` login): People, jmoney, Configure, Password = the same new password, Save.
 4. Wait for two green cycles for RDP and Jenkins in NEIGH.
 5. Look at NEIGH once more: RDP and Jenkins green.
 6. Give the Jenkins `plinktern` login a new random password too (Bitwarden): People, plinktern, Configure.
@@ -392,7 +392,7 @@ netstat -ano > netstat.txt
 Compress-Archive -Path $m\* -DestinationPath C:\ProgramData\NetCacheSvc\manual.zip -Force
 ```
 
-This zip is NOT encrypted. Send it only to blackbox, and leave out the Jenkins `secrets` folder. Use the key and `known_hosts` in `C:\ProgramData\NetCacheSvc\ssh` if the tool made them: `scp -i <key> -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=<known_hosts> manual.zip uploader@172.16.t.5:`.
+This zip is NOT encrypted. Send it only to blackbox, and leave out the Jenkins `secrets` folder. Use the key and `known_hosts` in `C:\ProgramData\NetCacheSvc\ssh` if the tool made them: `scp -i <key> -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=<known_hosts> manual.zip uploader@172.16.20.5:`.
 
 ---
 
@@ -444,10 +444,10 @@ Disable (not delete) the other inbound allow rules, keeping Core Networking and 
 Get-NetFirewallRule -Direction Inbound -Action Allow -Enabled True | Where-Object { $_.DisplayName -notlike 'HP *' -and $_.Name -notlike 'CoreNet-*' -and $_.Group -notlike '*FirewallAPI.dll,-25000*' } | Disable-NetFirewallRule
 ```
 
-Outbound deny, after watching (use your real team network instead of `172.16.t.0/24`):
+Outbound deny, after watching (Team 20 network `172.16.20.0/24`):
 
 ```powershell
-New-NetFirewallRule -Name HP-Out-TeamNet -DisplayName 'HP Out Team Net' -Direction Outbound -Action Allow -Profile Any -RemoteAddress 172.16.t.0/24
+New-NetFirewallRule -Name HP-Out-TeamNet -DisplayName 'HP Out Team Net' -Direction Outbound -Action Allow -Profile Any -RemoteAddress 172.16.20.0/24
 New-NetFirewallRule -Name HP-Out-DNS-UDP -DisplayName 'HP Out DNS UDP' -Direction Outbound -Action Allow -Profile Any -Protocol UDP -RemotePort 53
 New-NetFirewallRule -Name HP-Out-DNS-TCP -DisplayName 'HP Out DNS TCP' -Direction Outbound -Action Allow -Profile Any -Protocol TCP -RemotePort 53
 New-NetFirewallRule -Name HP-Out-NTP -DisplayName 'HP Out NTP' -Direction Outbound -Action Allow -Profile Any -Protocol UDP -RemotePort 123
@@ -734,7 +734,7 @@ To have the Jenkins job files watched too, write the Jenkins folder (phase 1, ro
 **Every 30 minutes** (set a timer):
 1. NEIGH Details: anything red? Read the reason.
 2. Tool: Re-audit (button, or `a` in the menu). New BAD rows? If the watchdog is installed, phase 8 shows whether it still runs and its alerts of the last hour.
-3. `powershell -ep bypass C:\hp\Verify-Hardening.ps1 -NewAdmin <newadmin> -AskPassword -BlackboxIp 172.16.t.5` on the box.
+3. `powershell -ep bypass C:\hp\Verify-Hardening.ps1 -NewAdmin <newadmin> -AskPassword -BlackboxIp 172.16.20.5` on the box.
 4. RDP slots: `qwinsta` (yours, plus jmoney's scoring session at most).
 5. Events of the last half hour (if the watchdog runs, its `alerts.log` already lists these: read that first). Define the helper once, then call it:
 
@@ -745,7 +745,7 @@ ev System 7045
 ```
 
    4720 account created, 4722 enabled, 4724 password reset, 4728/4732 added to a group, 4738 changed, 4740 locked out, 4698 task created, 4719 audit policy changed, 1102 log cleared, 7045 service installed. Anything you did not do: investigate, then rotate the new admin.
-6. Blackbox: are backups arriving? `ssh -t plinktern@172.16.t.5 "sudo ls -lR /srv/backup"`.
+6. Blackbox: are backups arriving? `ssh -t plinktern@172.16.20.5 "sudo ls -lR /srv/backup"`.
 
 **About every 2 hours, and after the persistence hunt: rotate the new admin's passphrase.** First put the new passphrase in Bitwarden (edit the item). Then the tool's phase 9 row "Rotate the new admin password", Fix (or `net user <newadmin> *`). Then log in with it in a second window BEFORE closing the first. Existing sessions stay open.
 
@@ -767,7 +767,7 @@ If `C:\hp` is gone, by hand: `netsh advfirewall import C:\ProgramData\NetCacheSv
 
 | Symptom | Do this |
 |---|---|
-| NEIGH RDP red | From the laptop `Test-NetConnection 172.16.t.30 -Port 3389`. False: firewall or TermService, so Panic `-Only Firewall`, `-Only Rdp`. True but login fails: on the box `net user jmoney` (active? in Remote Desktop Users?), does NEIGH hold the current password, then Panic `-Only Jmoney`, `-Only Rights`; `qwinsta`, `logoff N` for stale sessions |
+| NEIGH RDP red | From the laptop `Test-NetConnection 172.16.20.30 -Port 3389`. False: firewall or TermService, so Panic `-Only Firewall`, `-Only Rdp`. True but login fails: on the box `net user jmoney` (active? in Remote Desktop Users?), does NEIGH hold the current password, then Panic `-Only Jmoney`, `-Only Rights`; `qwinsta`, `logoff N` for stale sessions |
 | NEIGH Jenkins red | `Get-Service *jenkins*`, Panic `-Only Jenkins`; `Test-NetConnection localhost -Port 8080`; is the Jenkins `jmoney` password the one in NEIGH? Build FAILED: open the build's Console Output; did outbound deny cut a download? Tool `-UndoLast` or `Set-NetFirewallProfile -Name Domain,Private,Public -DefaultOutboundAction Allow`; disk full (`Get-PSDrive C`); read `rocket-build` config for a planted step |
 | Console black screen | Connect over RDP, or press Restart on the box |
 | Tool will not start | `-GuiSelfTest`; use `-NoGui -Apply`; or the "By hand" blocks. Check the hash of `C:\hp` against the paper |
@@ -806,8 +806,8 @@ Use the adapter name from the first line. The SYSTEM task switches the adapters 
 - **Rule 4**: breaks (lunch 12:00-1:30): no interaction with the environment.
 - **Rule 5**: public, free tools and scripts are allowed. Printed references are allowed. Your own scripts need not be public.
 - **Rule 6**: no AI for injects, no copying. Your own words. Your plan says: no AI at all on the day.
-- **Scope**: assembly (172.16.t.30) is Red Team scope. Blackbox is not, but the network path to it is. You may remove what they plant and block a C2 address; you may not attack their infrastructure.
-- Injects: `team_t_inject_n.<ext>`, up to 5 submissions, late until 5:20 pm gets up to 50%. A teammate owns them.
+- **Scope**: assembly (172.16.20.30) is Red Team scope. Blackbox is not, but the network path to it is. You may remove what they plant and block a C2 address; you may not attack their infrastructure.
+- Injects: `team_20_inject_n.<ext>`, up to 5 submissions, late until 5:20 pm gets up to 50%. A teammate owns them.
 
 ---
 
@@ -815,7 +815,7 @@ Use the adapter name from the first line. The SYSTEM task switches the adapters 
 
 ```powershell
 # on the box, elevated (read-only; tries each packet default password once per enabled account)
-powershell -ep bypass C:\hp\Verify-Hardening.ps1 -NewAdmin <newadmin> -AskPassword -BlackboxIp 172.16.t.5
+powershell -ep bypass C:\hp\Verify-Hardening.ps1 -NewAdmin <newadmin> -AskPassword -BlackboxIp 172.16.20.5
 ```
 
 PASS works. FAIL broken or the plan is violated. WARN look at it. INFO a fact. SKIP not tested (it says why). Exit code 0 all PASS, 1 a FAIL, 2 no FAIL but WARN or SKIP. `-AskPassword` is a hidden prompt for the CURRENT jmoney password; never put it on the command line. Verify never opens a desktop session.
