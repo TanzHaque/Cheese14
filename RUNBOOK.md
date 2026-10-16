@@ -8,7 +8,7 @@ updated: 2026-10-15
 Print this. On competition day there is **no AI at all** (packet rule 6, and your own rule). This file, `0-Gameplan.md` and the scripts are all you have - read them tonight.
 
 - Team number: **t = ____**   assembly = `172.16.t.30`, blackbox = `172.16.t.5`. Replace `t` in every command (write it on the paper copy with a pen).
-- Bundle hash (first 16 characters of the SHA-256 of `hp.zip`, written after the Friday freeze): `________________`
+- Bundle hash (first 16 characters of the SHA-256 of `hp.zip`, written after the Friday freeze): `932527B1C51446A5`
 - Page 1 (section 0) is the card. The rest is reference, in phase order. "By hand" blocks are only for when the tool will not run.
 
 **Honest status.** Nothing in this file was run on a real Windows Server, a real Jenkins or the real blackbox. The tool's code passed its 26 test files (2807 checks) on Linux with PowerShell 7 and a pretend Windows box. Two parts used real programs on Linux: the archive encryption opens with real OpenSSL (`Tests\Test-ActBackup.ps1`), and the upload works with a real `sshd`, real `scp` and the restricted key line (`Tests\Test-BackupTransfer.ps1`). NOT run anywhere: the blackbox setup lines, the optional mover script (5.4), every "By hand" block, the checks in sections 7-9, and the watchdog (section 10: the scheduled task, the event IDs, how long a pass takes). Rehearse all of it in the lab. A step you cannot explain, or that fails, gets fixed in the lab, not on the day.
